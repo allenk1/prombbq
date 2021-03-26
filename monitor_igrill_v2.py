@@ -3,7 +3,7 @@ import time
 
 from igrill import IGrillV2Peripheral
 
-ADDRESS = '55:36:DB:0F:7D:54'
+ADDRESS = '70:91:8F:1A:53:C7'
 DATA_FILE = '/tmp/igrill.json'
 INTERVAL = 15
 
