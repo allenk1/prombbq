@@ -56,7 +56,7 @@ class IDevicePeripheral(btle.Peripheral):
         Performs iDevices challenge/response handshake. Returns if handshake succeeded
 
         """
-        print "Authenticating..."
+        print("Authenticating...")
         # encryption key used by igrill mini
         key = "".join([chr((256 + x) % 256) for x in self.encryption_key])
 
@@ -66,18 +66,18 @@ class IDevicePeripheral(btle.Peripheral):
 
         # read device challenge
         encrypted_device_challenge = self.characteristic(UUIDS.DEVICE_CHALLENGE).read()
-        print "encrypted device challenge:", str(encrypted_device_challenge).encode("hex")
+        print("encrypted device challenge:", str(encrypted_device_challenge).encode("hex"))
         device_challenge = decrypt(key, encrypted_device_challenge)
-        print "decrypted device challenge:", str(device_challenge).encode("hex")
+        print("decrypted device challenge:", str(device_challenge).encode("hex"))
 
         # verify device challenge
         if device_challenge[:8] != challenge[:8]:
-            print "Invalid device challenge"
+            print("Invalid device challenge")
             return False
 
         # send device response
         device_response = chr(0) * 8 + device_challenge[8:]
-        print "device response: ", str(device_response).encode("hex")
+        print("device response: ", str(device_response).encode("hex"))
         encrypted_device_response = encrypt(key, device_response)
         self.characteristic(UUIDS.DEVICE_RESPONSE).write(encrypted_device_response, True)
 

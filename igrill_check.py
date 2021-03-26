@@ -26,6 +26,6 @@ class IGrillCheck(AgentCheck):
 if __name__ == '__main__':
     check, instances = IGrillCheck.from_yaml(CONFIG_PATH)
     for instances in instances:
-        print '\nRunning check'
+        print('\nRunning check')
         check.check(instance)
-        print 'Metrics: {}'.format(check.get_metrics())
+        print('Metrics: {}'.format(check.get_metrics()))
