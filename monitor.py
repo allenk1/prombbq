@@ -39,6 +39,7 @@ if __name__ == '__main__':
         batt = periph.read_battery()
 
         i=1
+        print(temp)
         for temp in temps:
             if temp != 63536.0:
                 print("bbq/probe{}".format(i))
@@ -56,5 +57,5 @@ if __name__ == '__main__':
         print("bbq/battery - {}%".format(batt))
         battery.set(batt)
 
-        push_to_gateway(PUSHGATEWAY, job='batchA', registry=registry, handler=promAuthHandler)
+        push_to_gateway(PUSHGATEWAY, job='prombbq', registry=registry, handler=promAuthHandler)
         time.sleep(INTERVAL)
