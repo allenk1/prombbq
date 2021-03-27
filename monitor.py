@@ -24,14 +24,10 @@ probe_three = Gauge('bbq_probe_three_temp', 'Temp of probe three', registry=regi
 probe_four = Gauge('bbq_probe_four_temp', 'Temp of probe four', registry=registry)
 battery = Gauge('bbq_battery', 'Battery of the iGrill', registry=registry)
 
-def promAuthHandler(url):
-    p = urllib.request.HTTPPasswordMgrWithDefaultRealm()
-    p.add_password(realm=None,
-        uri=url,
-        user=os.environ['PROMBBQ_BASIC_AUTH_USER'],
-        passwd=os.environ['PROMBBQ_BASIC_AUTH_PASSSWORD']
-    )
-    return urllib.request.HTTPBasicAuthHandler(p)
+def promAuthHandler(url, method, timeout, headers, data):
+    user=os.environ['PROMBBQ_BASIC_AUTH_USER']
+    passwd=os.environ['PROMBBQ_BASIC_AUTH_PASSSWORD']
+    return basic_auth_handler(url, method, timeout, headers, data, user, passwd)
 
 
 if __name__ == '__main__':
@@ -60,5 +56,5 @@ if __name__ == '__main__':
         print("bbq/battery - {}%".format(batt))
         battery.set(batt)
 
-        push_to_gateway('localhost:9091', job='batchA', registry=registry, handler=promAuthHandler(PUSHGATEWAY))
+        push_to_gateway(PUSHGATEWAY, job='batchA', registry=registry, handler=promAuthHandler)
         time.sleep(INTERVAL)
