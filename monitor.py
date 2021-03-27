@@ -39,8 +39,7 @@ if __name__ == '__main__':
         batt = periph.read_battery()
 
         i=1
-        print(temps)
-        for temp in temps:
+        for index, temp in temps.tems():
             if temp != 63536.0:
                 print("bbq/probe{}".format(i))
                 print("temp - {}".format(temp))
