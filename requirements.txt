@@ -1,3 +1,2 @@
 bluepy
-pycrypto
 prometheus_client

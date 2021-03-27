@@ -40,12 +40,13 @@ if __name__ == '__main__':
 
     while True:
         temps = periph.read_temperature(False, 0)
-        battery = periph.read_battery()
+        batt = periph.read_battery()
 
         i=1
         for temp in temps:
             if temp != 63536.0:
-                print("bbq/probe{} - {}".format(i, temp))
+                print("bbq/probe{}".format(i))
+                print("temp - {}".format(temp))
                 if i == 1:
                     probe_one.set(temp)
                 if i == 2:
@@ -56,8 +57,8 @@ if __name__ == '__main__':
                     probe_four.set(temp)
             i+=1
 
-        print("bbq/battery - {}%".format(periph.read_battery()))
-        battery.set(periph.read_battery())
+        print("bbq/battery - {}%".format(batt))
+        battery.set(batt)
 
         push_to_gateway('localhost:9091', job='batchA', registry=registry, handler=promAuthHandler(PUSHGATEWAY))
         time.sleep(INTERVAL)
