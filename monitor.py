@@ -1,7 +1,11 @@
-import json
 import time
+import os
+import urllib
 
 from igrill import IGrillV2Peripheral
+
+from prometheus_client import Gauge, push_to_gateway, CollectorRegistry
+from prometheus_client.exposition import basic_auth_handler
 
 import logging
 logging.basicConfig()
@@ -10,21 +14,50 @@ logging.getLogger().setLevel(logging.DEBUG)
 ADDRESS = '70:91:8F:1A:53:C7'
 DATA_FILE = '/tmp/igrill.json'
 INTERVAL = 1
+PUSHGATEWAY = os.environ['PROMBBQ_PUSHSERVER']
+
+# Prometheus Setup
+registry = CollectorRegistry()
+probe_one = Gauge('bbq_probe_one_temp', 'Temp of probe one', registry=registry)
+probe_two = Gauge('bbq_probe_two_temp', 'Temp of probe two', registry=registry)
+probe_three = Gauge('bbq_probe_three_temp', 'Temp of probe three', registry=registry)
+probe_four = Gauge('bbq_probe_four_temp', 'Temp of probe four', registry=registry)
+battery = Gauge('bbq_battery', 'Battery of the iGrill', registry=registry)
+
+def promAuthHandler(url):
+    p = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+    p.add_password(realm=None,
+        uri=url,
+        user=os.environ['PROMBBQ_BASIC_AUTH_USER'],
+        passwd=os.environ['PROMBBQ_BASIC_AUTH_PASSSWORD']
+    )
+    return urllib.request.HTTPBasicAuthHandler(p)
+
 
 if __name__ == '__main__':
 
     periph = IGrillV2Peripheral(ADDRESS)
 
     while True:
+        temps = periph.read_temperature(False, 0)
+        battery = periph.read_battery()
 
-        sensor_data = {
-            'temperature': periph.read_temperature(False, 0),
-            'battery': periph.read_battery(),
-        }
+        i=1
+        for temp in temps:
+            if temp != 63536.0:
+                print("bbq/probe{} - {}".format(i, temp))
+                if i == 1:
+                    probe_one.set(temp)
+                if i == 2:
+                    probe_two.set(temp)
+                if i == 3:
+                    probe_three.set(temp)
+                if i == 4:
+                    probe_four.set(temp)
+            i+=1
 
-        print('Writing sensor data: {}'.format(sensor_data))
-        with open(DATA_FILE, 'w') as f:
-            f.write(json.dumps(sensor_data))
+        print("bbq/battery - {}%".format(periph.read_battery()))
+        battery.set(periph.read_battery())
 
+        push_to_gateway('localhost:9091', job='batchA', registry=registry, handler=promAuthHandler(PUSHGATEWAY))
         time.sleep(INTERVAL)
-
