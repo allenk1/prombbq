@@ -13,7 +13,7 @@ docker build -t prombbq -f Dockerfile .
 ```
 
 2. Run the new docker image.
-3. 
+
 ```bash
 docker run --net host -e PROMBBQ_PUSHSERVER=<pushgateway-url> -e PROMBBQ_BASIC_AUTH_USER=<basic-auth-user> -e PROMBBQ_BASIC_AUTH_PASSSWORD=<basicauth-pw> --restart always prombbq
 ```
