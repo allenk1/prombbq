@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /usr/src/prombbq
 
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY *.py ./
 
@@ -30,4 +30,4 @@ COPY *.py ./
 RUN mv /usr/lib/arm-linux-gnueabihf/libboost_python-py27.so.1.55.0 /usr/lib/arm-linux-gnueabihf/libboost_python-py27.so.1.55.0-old
 RUN ln -s /usr/lib/arm-linux-gnueabihf/libboost_python-py34.so.1.55.0 /usr/lib/arm-linux-gnueabihf/libboost_python-py27.so.1.55.0
 
-CMD [ "python", "./monitor.py"]
+CMD [ "python3", "./monitor.py"]
