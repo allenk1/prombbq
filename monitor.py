@@ -41,7 +41,7 @@ if __name__ == '__main__':
             i=1
             for index, temp in temps.items():
                 if temp != 63536.0:
-                    print("bbq/probe{} - {}".format(i, temp))
+                    
                     if i == 1:
                         probe_one.set(temp)
                     if i == 2:
@@ -52,6 +52,7 @@ if __name__ == '__main__':
                         probe_four.set(temp)
                 i+=1
 
+            print("bbq/probe - {}".format(temps))
             print("bbq/battery - {}%".format(batt))
             battery.set(batt)
 
