@@ -21,10 +21,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /usr/src/prombbq
 
-COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-COPY *.py ./
+COPY . ./
+RUN pip3 install -r requirements.txt
 
 # fix library problem for python3 & libboost
 RUN mv /usr/lib/arm-linux-gnueabihf/libboost_python-py27.so.1.55.0 /usr/lib/arm-linux-gnueabihf/libboost_python-py27.so.1.55.0-old
