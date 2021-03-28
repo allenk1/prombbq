@@ -1,8 +1,5 @@
 FROM arm32v7/python:3-slim
 
-# Install software for bluepy
-RUN apt-get install libglib2.0-dev
-
 WORKDIR /usr/src/prombbq
 
 COPY requirements.txt ./
