@@ -4,7 +4,7 @@ import urllib
 
 from igrill import IGrillV2Peripheral
 
-from prometheus_client import Gauge, push_to_gateway, CollectorRegistry
+from prometheus_client import Gauge, push_to_gateway, CollectorRegistry, delete_from_gateway
 from prometheus_client.exposition import basic_auth_handler
 
 import logging
@@ -33,27 +33,30 @@ def promAuthHandler(url, method, timeout, headers, data):
 if __name__ == '__main__':
 
     periph = IGrillV2Peripheral(ADDRESS)
+    try:
+        while True:
+            temps = periph.read_temperature(False, 0)
+            batt = periph.read_battery()
 
-    while True:
-        temps = periph.read_temperature(False, 0)
-        batt = periph.read_battery()
+            i=1
+            for index, temp in temps.items():
+                if temp != 63536.0:
+                    print("bbq/probe{} - {}".format(i, temp))
+                    if i == 1:
+                        probe_one.set(temp)
+                    if i == 2:
+                        probe_two.set(temp)
+                    if i == 3:
+                        probe_three.set(temp)
+                    if i == 4:
+                        probe_four.set(temp)
+                i+=1
 
-        i=1
-        for index, temp in temps.items():
-            if temp != 63536.0:
-                print("bbq/probe{} - {}".format(i, temp))
-                if i == 1:
-                    probe_one.set(temp)
-                if i == 2:
-                    probe_two.set(temp)
-                if i == 3:
-                    probe_three.set(temp)
-                if i == 4:
-                    probe_four.set(temp)
-            i+=1
+            print("bbq/battery - {}%".format(batt))
+            battery.set(batt)
 
-        print("bbq/battery - {}%".format(batt))
-        battery.set(batt)
-
-        push_to_gateway(PUSHGATEWAY, job='prombbq', registry=registry, handler=promAuthHandler)
-        time.sleep(INTERVAL)
+            push_to_gateway(PUSHGATEWAY, job='prombbq', registry=registry, handler=promAuthHandler)
+            time.sleep(INTERVAL)
+    except:
+        delete_from_gateway(PUSHGATEWAY, job='prombbq', handler=promAuthHandler)
+        logging.fatal("Bluetooth error")
