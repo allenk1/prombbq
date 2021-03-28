@@ -1,4 +1,4 @@
-FROM python:3
+FROM arm32v7/python:3
 
 # Install software for bluepy
 RUN apt-get install libglib2.0-dev
