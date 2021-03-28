@@ -58,8 +58,8 @@ if __name__ == '__main__':
             push_to_gateway(PUSHGATEWAY, job='prombbq', registry=registry, handler=promAuthHandler)
             time.sleep(INTERVAL)
     except:
-        probe_one.set(0)
-        probe_two.set(0)
-        probe_three.set(0)
-        probe_four.set(0)
+        probe_one.set(0.0)
+        probe_two.set(0.0)
+        probe_three.set(0.0)
+        probe_four.set(0.0)
         logging.fatal("Bluetooth error")
