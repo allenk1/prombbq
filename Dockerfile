@@ -1,5 +1,7 @@
 # Pull base image
 FROM resin/rpi-raspbian:jessie
+# Comment out the above line and use the following for intel based machines
+# FROM debian:bullseye
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
